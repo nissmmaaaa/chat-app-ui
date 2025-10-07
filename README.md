@@ -36,3 +36,32 @@ CSS3 – styling with gradients, flexbox, and animations
 JavaScript – interactivity, page switching, and message handling
 
 Google Fonts – Cinzel font for app branding
+
+## Setup Guide 
+
+Follow these steps to run the Violet Chat App locally:
+
+### Clone the repository
+
+git clone https://github.com/nissmmaaaa/chat-app-ui.git
+
+
+### Navigate to the project folder
+
+cd chat-app-ui
+
+
+### Open the project in a browser
+
+Simply double-click index.html
+
+OR use a local server like Live Server
+ in VS Code
+
+Explore the App
+
+Click Get Started on the splash screen
+
+Navigate through Chats, Status, Groups, and Calls
+
+Open a chat and send messages
