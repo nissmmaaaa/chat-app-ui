@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Violet Chat App</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
+<style>
+  body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f3f1f8;
+  }
+  .hidden { display: none; }
+
+  /* Splash Screen */
+  #splashScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #7b2ff7;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    color: white;
+  }
+  #splashScreen h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 60px;
+    margin-bottom: 30px;
+  }
+  #splashScreen button {
+    padding: 12px 24px;
+    font-size: 18px;
+    border: none;
+    border-radius: 25px;
+    background-color: white;
+    color: #7b2ff7;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  /* Top App Bar */
+  .app-bar {
+    background: linear-gradient(90deg, #7b2ff7, #f107a3);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .app-bar h1 { margin: 0; font-size: 20px; }
+  .menu { position: relative; cursor: pointer; }
+  .dropdown {
+    position: absolute;
+    right: 0;
+    top: 40px;
+    background: white;
+    color: black;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    display: none;
+    width: 150px;
+  }
+  .dropdown div {
+    padding: 10px;
+    cursor: pointer;
+  }
+  .dropdown div:hover { background: #eee; }
+
+  /* List items common style */
+  .list-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 5px;
+    background: white;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .list-item img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+  }
+  .item-info {
+    flex: 1;
+    margin-left: 10px;
+  }
+  .item-info h4 { margin: 0; font-size: 16px; }
+  .item-info p { margin: 2px 0; color: #555; font-size: 14px; }
+  .item-time { font-size: 12px; color: #888; }
+
+  /* Bottom Navigation */
+  .bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    background: #7b2ff7;
+    color: white;
+    padding: 10px 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+  }
+  .bottom-nav div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  /* Chat Page */
+  .chat-page {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 60px);
+  }
+  .chat-messages {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+  }
+  .message {
+    padding: 8px 12px;
+    margin: 5px 0;
+    border-radius: 20px;
+    max-width: 70%;
+  }
+  .sent { background: #d1b3ff; align-self: flex-end; }
+  .received { background: #e3d1ff; align-self: flex-start; }
+  .chat-input {
+    display: flex;
+    padding: 10px;
+    background: white;
+  }
+  .chat-input input {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    outline: none;
+  }
+  .chat-input button {
+    margin-left: 10px;
+    padding: 8px 12px;
+    background: #7b2ff7;
+    border: none;
+    color: white;
+    border-radius: 20px;
+    cursor: pointer;
+  }
+
+  /* Status List */
+  .status-list { padding: 10px; }
+  .status-item { display: flex; align-items: center; background:white; padding:10px; border-radius:10px; margin-bottom:8px; }
+  .status-item img { width:50px; height:50px; border-radius:50%; border:2px solid #7b2ff7; }
+  .status-info { margin-left:10px; }
+  .add-status { display: flex; align-items: center; padding:10px; background:white; border-radius:10px; margin-bottom:8px; cursor:pointer; }
+  .add-status span { margin-left:10px; font-weight:bold; }
+
+  /* Placeholder for Groups and Calls */
+  .groups-list, .calls-list { padding: 10px; }
+</style>
+</head>
+<body>
+
+<div id="splashScreen">
+  <h1>Violet</h1>
+  <button onclick="getStarted()">Get Started</button>
+</div>
+
+<div id="chatListPage" class="hidden">
+  <div class="app-bar">
+    <h1>Violet</h1>
+    <div class="menu" onclick="toggleDropdown()">⋮
+      <div class="dropdown" id="dropdownMenu">
+        <div>Profile</div>
+        <div>Settings</div>
+        <div>Logout</div>
+      </div>
+    </div>
+  </div>
+  <div class="chat-list">
+    <div class="list-item" onclick="openChat('savetha')">
+      <img src="https://i.pravatar.cc/50?img=1" alt="Alice">
+      <div class="item-info">
+        <h4>savetha</h4>
+        <p>Hi there!</p>
+      </div>
+      <div class="item-time">10:00 PM</div>
+    </div>
+    <div class="list-item" onclick="openChat('Maha')">
+      <img src="https://i.pravatar.cc/50?img=2" alt="Alice">
+      <div class="item-info">
+        <h4>Maha</h4>
+        <p>Coming to trip??</p>
+      </div>
+      <div class="item-time">09:00 PM</div>
+    </div>
+    <div class="list-item" onclick="openChat('Nisma')">
+      <img src="https://i.pravatar.cc/50?img=3" alt="Alice">
+      <div class="item-info">
+        <h4>Nisma</h4>
+        <p>Good Good</p>
+      </div>
+      <div class="item-time">08:00 PM</div>
+    </div>
+    <div class="list-item" onclick="openChat('Sabitha')">
+      <img src="https://i.pravatar.cc/50?img=4" alt="Alice">
+      <div class="item-info">
+        <h4>Sabitha</h4>
+        <p>Is this okay</p>
+      </div>
+      <div class="item-time">12:00 PM</div>
+    </div>
+    <div class="list-item" onclick="openChat('Nhyvija')">
+      <img src="https://i.pravatar.cc/50?img=7" alt="Alice">
+      <div class="item-info">
+        <h4>Nhyvija</h4>
+        <p>What r u doing</p>
+      </div>
+      <div class="item-time">11:50 AM</div>
+    </div>
+    <div class="list-item" onclick="openChat('Safna')">
+      <img src="https://i.pravatar.cc/50?img=8" alt="Alice">
+      <div class="item-info">
+        <h4>Safna</h4>
+        <p>ooh</p>
+      </div>
+      <div class="item-time">11:40 AM</div>
+    </div>
+    <div class="list-item" onclick="openChat('Poornisha')">
+      <img src="https://i.pravatar.cc/50?img=5" alt="Bob">
+      <div class="item-info">
+        <h4>Poornisha</h4>
+        <p>Hello!</p>
+      </div>
+      <div class="item-time">11:45 AM</div>
+    </div>
+    <div class="list-item" onclick="openChat('Shermila')">
+      <img src="https://i.pravatar.cc/50?img=12" alt="Alice">
+      <div class="item-info">
+        <h4>Shermila</h4>
+        <p>Is this okay</p>
+      </div>
+      <div class="item-time">Yesterday</div>
+    </div>
+    <div class="list-item" onclick="openChat('Karthika')">
+      <img src="https://i.pravatar.cc/50?img=11" alt="Alice">
+      <div class="item-info">
+        <h4>Karthika</h4>
+        <p>Is this okay</p>
+      </div>
+      <div class="item-time">Yesterday</div>
+    </div>
+    <div class="list-item" onclick="openChat('Shahina')">
+      <img src="https://i.pravatar.cc/50?img=9" alt="Alice">
+      <div class="item-info">
+        <h4>Shahina</h4>
+        <p>hmm</p>
+      </div>
+      <div class="item-time">Yesterday</div>
+    </div>
+    <div class="list-item" onclick="openChat('Rasmi')">
+      <img src="https://i.pravatar.cc/50?img=10" alt="Alice">
+      <div class="item-info">
+        <h4>Rasmi</h4>
+        <p>Is this okay</p>
+      </div>
+        <div class="item-time">Yesterday</div>
+    </div>
+    <div class="list-item" onclick="openChat('Narthana')">
+      <img src="https://i.pravatar.cc/50?img=11" alt="Alice">
+      <div class="item-info">
+        <h4>Narthana</h4>
+        <p>Is this okay</p>
+      </div>
+      <div class="item-time">Yesterday</div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <div onclick="showPage('chatListPage')">💬<span>Chats</span></div>
+    <div onclick="showPage('statusPage')">🟣<span>Status</span></div>
+    <div onclick="showPage('groupsPage')">👥<span>Groups</span></div>
+    <div onclick="showPage('callsPage')">📞<span>Calls</span></div>
+  </div>
+</div>
+
+<div id="chatPage" class="hidden">
+  <div class="app-bar">
+    <span onclick="backToChatList()" style="cursor:pointer;">⬅</span>
+    <h1 id="chatName">Chat</h1>
+    <div></div>
+  </div>
+  <div class="chat-page">
+    <div class="chat-messages" id="chatMessages">
+      <div class="message received">Hi</div>
+      <div class="message sent">Hello</div>
+      <div class="message received">How are you?</div>
+    </div>
+    <div class="chat-input">
+      <input type="text" id="messageInput" placeholder="Type a message...">
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+</div>
+
+<div id="statusPage" class="hidden">
+  <div class="app-bar">
+    <span onclick="showPage('chatListPage')" style="cursor:pointer;">⬅</span>
+    <h1>Status</h1>
+    <div></div>
+  </div>
+  <div class="status-list">
+    <div class="add-status">➕<span>Add Status</span></div>
+    <div class="status-item">
+      <img src="https://i.pravatar.cc/50?img=20" alt="">
+      <div class="status-info"><h4>Nisma</h4></div>
+    </div>
+    <div class="status-item">
+      <img src="https://i.pravatar.cc/50?img=19" alt="">
+      <div class="status-info"><h4>Savetha</h4></div>
+    </div>
+    <div class="status-item">
+      <img src="https://i.pravatar.cc/50?img=18" alt="">
+      <div class="status-info"><h4>poornisha</h4></div>
+    </div>
+    <div class="status-item">
+      <img src="https://i.pravatar.cc/50?img=17" alt="">
+      <div class="status-info"><h4>sabitha</h4></div>
+    </div>
+    <div class="status-item">
+      <img src="https://i.pravatar.cc/50?img=16" alt="">
+      <div class="status-info"><h4>maha</h4></div>
+    </div>
+    <div class="status-item">
+      <img src="https://i.pravatar.cc/50?img=15" alt="">
+      <div class="status-info"><h4>nhyvija</h4></div>
+    </div>
+    <div class="status-item">
+      <img src="https://i.pravatar.cc/50?img=14" alt="">
+      <div class="status-info"><h4>safna</h4></div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <div onclick="showPage('chatListPage')">💬<span>Chats</span></div>
+    <div onclick="showPage('statusPage')">🟣<span>Status</span></div>
+    <div onclick="showPage('groupsPage')">👥<span>Groups</span></div>
+    <div onclick="showPage('callsPage')">📞<span>Calls</span></div>
+  </div>
+</div>
+
+<div id="groupsPage" class="hidden">
+  <div class="app-bar">
+    <span onclick="showPage('chatListPage')" style="cursor:pointer;">⬅</span>
+    <h1>Groups</h1>
+    <div></div>
+  </div>
+  <div class="groups-list">
+    <div class="list-item">
+      <img src="https://i.pravatar.cc/50?img=25" alt="">
+      <div class="item-info">
+        <h4>Friends Group</h4>
+        <p>Where were you??</p>
+      </div>
+      <div class="item-time">10:30 AM</div>
+    </div>
+    <div class="list-item">
+      <img src="https://i.pravatar.cc/50?img=30" alt="">
+      <div class="item-info">
+        <h4>Work Group</h4>
+        <p>Don't forget the meeting</p>
+      </div>
+      <div class="item-time">Yesterday</div>
+    </div>
+    <div class="list-item">
+      <img src="https://i.pravatar.cc/50?img=45" alt="">
+      <div class="item-info">
+        <h4>III B AI DS</h4>
+        <p>Bring 800rs</p>
+      </div>
+      <div class="item-time">Yesterday</div>
+    </div>
+    <div class="list-item">
+      <img src="https://i.pravatar.cc/50?img=6" alt="">
+      <div class="item-info">
+        <h4>8 Roses</h4>
+        <p>blue layssss</p>
+      </div>
+      <div class="item-time">Yesterday</div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <div onclick="showPage('chatListPage')">💬<span>Chats</span></div>
+    <div onclick="showPage('statusPage')">🟣<span>Status</span></div>
+    <div onclick="showPage('groupsPage')">👥<span>Groups</span></div>
+    <div onclick="showPage('callsPage')">📞<span>Calls</span></div>
+  </div>
+</div>
+
+<div id="callsPage" class="hidden">
+  <div class="app-bar">
+    <span onclick="showPage('chatListPage')" style="cursor:pointer;">⬅</span>
+    <h1>Calls</h1>
+    <div></div>
+  </div>
+  <div class="calls-list">
+    <div class="list-item">
+      <img src="https://i.pravatar.cc/50?img=58" alt="">
+      <div class="item-info">
+        <h4>Maha</h4>
+        <p>Incoming call</p>
+      </div>
+     
+      <div class="item-time">09:00 AM</div>
+    </div>
+    <div class="list-item">
+      <img src="https://i.pravatar.cc/50?img=50" alt="">
+      <div class="item-info">
+        <h4>Poornisha</h4>
+        <p>Outgoing call</p>
+      </div>
+      <div class="item-time">Yesterday</div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <div onclick="showPage('chatListPage')">💬<span>Chats</span></div>
+    <div onclick="showPage('statusPage')">🟣<span>Status</span></div>
+    <div onclick="showPage('groupsPage')">👥<span>Groups</span></div>
+    <div onclick="showPage('callsPage')">📞<span>Calls</span></div>
+  </div>
+</div>
+
+<script>
+  function getStarted() {
+  document.getElementById('splashScreen').style.display = 'none'; // hide splash
+  document.getElementById('chatListPage').classList.remove('hidden'); // show home page
+}
+
+  function toggleDropdown() {
+    const dropdown = document.getElementById('dropdownMenu');
+    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+  }
+
+  function showPage(pageId) {
+    document.querySelectorAll('body > div:not(#splashScreen)').forEach(div => div.classList.add('hidden'));
+    document.getElementById(pageId).classList.remove('hidden');
+  }
+
+  function openChat(name) {
+    document.getElementById('chatName').innerText = name;
+    showPage('chatPage');
+  }
+
+  function backToChatList() {
+    showPage('chatListPage');
+  }
+
+  function sendMessage() {
+    const input = document.getElementById('messageInput');
+    const text = input.value.trim();
+    if (text) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'message sent';
+      msgDiv.innerText = text;
+      document.getElementById('chatMessages').appendChild(msgDiv);
+      input.value = '';
+      msgDiv.scrollIntoView();
+    }
+  }
+</script>
+</body>
+</html>
